@@ -3,6 +3,7 @@ package main
 import (
 	"github-missing-api/trending"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -10,6 +11,10 @@ import (
 )
 
 func main() {
+	var port = "8080"
+	if _port := os.Getenv("PORT"); _port != "" {
+		port = _port
+	}
 	var goCache = cache.New(1*time.Hour, 1*time.Hour)
 	r := gin.Default()
 	trend := r.Group("/trending")
@@ -33,5 +38,5 @@ func main() {
 			}
 		})
 	}
-	r.Run(":8080") // listen and serve on 0.0.0.0:8080
+	r.Run(":" + port) // listen and serve on 0.0.0.0:8080
 }
