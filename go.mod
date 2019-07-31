@@ -1,4 +1,4 @@
-module github-missing-api
+module github.com/jetsly/github-missing-api
 
 go 1.12
 

@@ -1,21 +1,18 @@
 package main
 
 import (
-	"github-missing-api/trending"
 	"net/http"
-	"os"
 	"time"
+
+	"github.com/jetsly/github-missing-api/trending"
 
 	"github.com/gin-gonic/gin"
 	"github.com/patrickmn/go-cache"
 )
 
 func main() {
-	var port = "8080"
-	if _port := os.Getenv("PORT"); _port != "" {
-		port = _port
-	}
-	var goCache = cache.New(1*time.Hour, 1*time.Hour)
+	const port = "8000"
+	goCache := cache.New(1*time.Hour, 1*time.Hour)
 	r := gin.Default()
 	trend := r.Group("/trending")
 	{
