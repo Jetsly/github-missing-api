@@ -1,6 +1,7 @@
 package trending
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
 	"net/http"
@@ -44,7 +45,11 @@ func toInt(s string) int {
 
 func FetchRepositories(language string, since string) []TrendRepository {
 	var url = GITHUB_URL + "/trending/" + language + "?since=" + since
-	resp, err := http.Get(url)
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+	resp, err := client.Get(url)
 	if err != nil {
 		log.Fatal(err)
 	}

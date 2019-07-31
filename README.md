@@ -1,4 +1,4 @@
-<h1 align="center">Github Missing Trending API</h1>
+<h1 align="center">Github Missing API</h1>
 
 <p align="center">:octocat: A simple API  of Github.</p>
 
@@ -7,8 +7,7 @@
 
 ## docker
 ```bash
-# $ CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o github-missing-api .
-$ docker build -t github-missing-api .
+$ docker run --rm -it -p 8080:8000 ddotjs/github-missing-api 
 ```
 
 ### API
