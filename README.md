@@ -54,7 +54,7 @@ Receive an array of trending repositories.
 
 **Parameters:**
 
-- `language`: **optional**, list trending repositories of certain programming languages, possible values are listed [here](languages.json).
+- `language`: **optional**, list trending repositories of certain programming languages.
 - `since`: **optional**, default to `daily`, possible values: `daily`, `weekly` and `monthly`.
 
 **Response:**
@@ -95,7 +95,7 @@ Receive an array of trending developers.
 
 **Parameters:**
 
-- `language`: **optional**, list trending repositories of certain programming languages, possible values are listed [here](languages.json).
+- `language`: **optional**, list trending repositories of certain programming languages.
 - `since`: **optional**, default to `daily`, possible values: `daily`, `weekly` and `monthly`.
 
 **Response:**
