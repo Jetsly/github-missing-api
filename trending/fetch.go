@@ -19,6 +19,12 @@ type TrendUser struct {
 	Username string `json:"username"`
 }
 
+type TrendRepo struct {
+	Name        string `json:"name"`
+	Url         string `json:"url"`
+	Description string `json:"description"`
+}
+
 type TrendRepository struct {
 	Author             string      `json:"author"`
 	Name               string      `json:"name"`
@@ -33,9 +39,22 @@ type TrendRepository struct {
 	TrendUser          []TrendUser `json:"builtBy"`
 }
 
+type TrendDeveloper struct {
+	Username string    `json:"username"`
+	Name     string    `json:"name"`
+	Type     string    `json:"type"`
+	Url      string    `json:"url"`
+	Avatar   string    `json:"avatar"`
+	Repo     TrendRepo `json:"repo"`
+}
+
 func removeDefaultAvatarSize(src string) string {
+	if len(src) == 0 {
+		return src
+	}
+	// re3, _ := regexp.Compile("?s=.*$")
+	// return re3.ReplaceAllString(src, "")
 	return src
-	// return strings.re(/\?s=.*$/, '');
 }
 
 func toInt(s string) int {
@@ -43,12 +62,15 @@ func toInt(s string) int {
 	return n
 }
 
-func FetchRepositories(language string, since string) []TrendRepository {
-	var url = GITHUB_URL + "/trending/" + language + "?since=" + since
+func createClient() *http.Client {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-	client := &http.Client{Transport: tr}
+	return &http.Client{Transport: tr}
+}
+
+func fetchDom(url string) *goquery.Document {
+	client := createClient()
 	resp, err := client.Get(url)
 	if err != nil {
 		log.Fatal(err)
@@ -61,6 +83,12 @@ func FetchRepositories(language string, since string) []TrendRepository {
 	if err != nil {
 		log.Fatal(err)
 	}
+	return doc
+}
+
+func FetchRepositories(language string, since string) []TrendRepository {
+	var url = GITHUB_URL + "/trending/" + language + "?since=" + since
+	doc := fetchDom(url)
 	var repositories []TrendRepository
 	doc.Find(".Box article.Box-row").Each(func(i int, repo *goquery.Selection) {
 		var title = strings.Split(strings.TrimSpace(repo.Find(".h3").Text()), "/")
@@ -101,4 +129,28 @@ func FetchRepositories(language string, since string) []TrendRepository {
 
 	})
 	return repositories
+}
+
+func FetchDevelopers(language string, since string) []TrendDeveloper {
+	var url = GITHUB_URL + "/trending/developers/" + language + "?since=" + since
+	doc := fetchDom(url)
+	var developers []TrendDeveloper
+	doc.Find(".Box article.Box-row").Each(func(i int, user *goquery.Selection) {
+		var relativeUrl = user.Find(".h3 a").AttrOr("href", "")
+		var repo = user.Find(".mt-2 > article")
+		//   $reuserpo.find('svg').remove();
+		developers = append(developers, TrendDeveloper{
+			Username: relativeUrl[1:],
+			Name:     strings.TrimSpace(user.Find(".h3 a").Text()),
+			Type:     user.Find("img").Parent().AttrOr("data-hovercard-type", ""),
+			Url:      fmt.Sprintf("%s%s", GITHUB_URL, relativeUrl),
+			Avatar:   removeDefaultAvatarSize(user.Find("img").AttrOr("src", "")),
+			Repo: TrendRepo{
+				Name:        strings.TrimSpace(repo.Find("a").Text()),
+				Description: strings.TrimSpace(repo.Find(".f6.mt-1").Text()),
+				Url:         fmt.Sprintf("%s%s", GITHUB_URL, repo.Find("a").AttrOr("href", "")),
+			},
+		})
+	})
+	return developers
 }

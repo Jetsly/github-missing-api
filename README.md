@@ -85,6 +85,39 @@ Receive an array of trending repositories.
 ]
 ```
 
+### Trending Developers
+
+Receive an array of trending developers.
+
+**URL Endpoint:**
+
+/trending/developers?language=javascript&since=weekly
+
+**Parameters:**
+
+- `language`: **optional**, list trending repositories of certain programming languages, possible values are listed [here](languages.json).
+- `since`: **optional**, default to `daily`, possible values: `daily`, `weekly` and `monthly`.
+
+**Response:**
+
+```json
+[
+  {
+    "username": "google",
+    "name": "Google",
+    "type": "organization",
+    "url": "https://github.com/google",
+    "avatar": "https://avatars0.githubusercontent.com/u/1342004",
+    "repo": {
+      "name": "traceur-compiler",
+      "description": "Traceur is a JavaScript.next-to-JavaScript-of-today compiler",
+      "url": "https://github.com/google/traceur-compiler"
+    }
+  }
+]
+```
+
+> `type` could be `organization` or `user`.
 
 
 ## contributors
